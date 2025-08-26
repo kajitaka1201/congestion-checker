@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui-elements/mode-toggle";
+import Link from "next/link";
+import HeaderUser from "@/components/ui-elements/header-user";
 
 export default function Header() {
   return (
@@ -9,7 +11,9 @@ export default function Header() {
       </div>
       <div className="flex items-center gap-2">
         <ModeToggle />
-        <Button>ログイン</Button>
+        <Button asChild>
+          <HeaderUser />
+        </Button>
       </div>
     </header>
   );
