@@ -4,9 +4,9 @@ import Link from "next/link";
 export default function Page() {
   return (
     <main className="px-4">
-      <p>メインページ</p>
+      <h2>編集ページ</h2>
       <Button asChild>
-        <Link href="/view">実際に使う</Link>
+        <Link href="/view">閲覧ページへ</Link>
       </Button>
     </main>
   );
