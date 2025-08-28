@@ -9,19 +9,26 @@ import {
   rectIntersection
 } from "@dnd-kit/core";
 import { UUID } from "crypto";
-import { ref, update } from "firebase/database";
+import { ref, set, update } from "firebase/database";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useObjectVal } from "react-firebase-hooks/database";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { Button } from "@/components/ui/button";
 import { v7 as createUUID } from "uuid";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger
+} from "@/components/ui/context-menu";
 
 type DraggableDeskProps = {
   desk: DeskType & { id: string };
   index: number;
+  userInfo: UserType | null | undefined;
 };
 
-function DraggableDesk({ desk, index }: DraggableDeskProps) {
+function DraggableDesk({ desk, index, userInfo }: DraggableDeskProps) {
   const {
     attributes,
     listeners,
@@ -46,15 +53,28 @@ function DraggableDesk({ desk, index }: DraggableDeskProps) {
         left: desk.x
       };
 
+  function deleteDesk() {
+    if (!userInfo?.storeId) return;
+    const deskRef = ref(db, `stores/${userInfo.storeId}/desks/${desk.id}`);
+    set(deskRef, null);
+  }
+
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-      className="bg-primary absolute flex h-[50px] w-[70px] cursor-pointer touch-none items-center justify-center rounded shadow">
-      <p className="text-lg text-white select-none">机 {index + 1}</p>
-    </div>
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <div
+          ref={setNodeRef}
+          style={style}
+          {...listeners}
+          {...attributes}
+          className="bg-primary absolute flex h-[50px] w-[70px] cursor-pointer touch-none items-center justify-center rounded shadow">
+          <p className="text-lg text-white select-none">机 {index + 1}</p>
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem onClick={deleteDesk}>削除</ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }
 
@@ -123,7 +143,14 @@ export default function CongestionEditing() {
         <div className="m-auth relative h-[700px] w-[900px] overflow-hidden border">
           {desks.map(
             (desk, index) =>
-              desk && <DraggableDesk key={desk.id} desk={desk} index={index} />
+              desk && (
+                <DraggableDesk
+                  key={desk.id}
+                  desk={desk}
+                  index={index}
+                  userInfo={userInfo}
+                />
+              )
           )}
         </div>
       </DndContext>
