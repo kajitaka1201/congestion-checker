@@ -13,6 +13,8 @@ import { ref, update } from "firebase/database";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useObjectVal } from "react-firebase-hooks/database";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
+import { Button } from "@/components/ui/button";
+import { v7 as createUUID } from "uuid";
 
 type DraggableDeskProps = {
   desk: DeskType & { id: string };
@@ -91,6 +93,20 @@ export default function CongestionEditing() {
     update(deskRef, { x: newX, y: newY });
   }
 
+  function addDesk() {
+    if (!userInfo?.storeId) return;
+
+    const newDesk = {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      used: false
+    };
+
+    const deskRef = ref(db, `stores/${userInfo.storeId}/desks`);
+    update(deskRef, { [createUUID()]: newDesk });
+  }
+
   if (userLoading || userInfoLoading || valueLoading) return <p>Loading...</p>;
   if (userError || userInfoError || valueError) {
     return (
@@ -98,16 +114,19 @@ export default function CongestionEditing() {
     );
   }
   return (
-    <DndContext
-      onDragEnd={handleDragEnd}
-      modifiers={[restrictToParentElement]}
-      collisionDetection={rectIntersection}>
-      <div className="m-auth relative h-[700px] w-[900px] overflow-hidden border">
-        {desks.map(
-          (desk, index) =>
-            desk && <DraggableDesk key={desk.id} desk={desk} index={index} />
-        )}
-      </div>
-    </DndContext>
+    <>
+      <Button onClick={addDesk}>机を追加する</Button>
+      <DndContext
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToParentElement]}
+        collisionDetection={rectIntersection}>
+        <div className="m-auth relative h-[700px] w-[900px] overflow-hidden border">
+          {desks.map(
+            (desk, index) =>
+              desk && <DraggableDesk key={desk.id} desk={desk} index={index} />
+          )}
+        </div>
+      </DndContext>
+    </>
   );
 }
