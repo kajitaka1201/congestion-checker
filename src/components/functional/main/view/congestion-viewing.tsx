@@ -1,10 +1,11 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { auth, db } from "@/firebase";
 import { cn } from "@/lib/utils";
 import { DatabaseType, UserType } from "@/types/firebase-type";
 import { UUID } from "crypto";
-import { ref } from "firebase/database";
+import { ref, set } from "firebase/database";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useObjectVal } from "react-firebase-hooks/database";
 
@@ -35,22 +36,30 @@ export default function CongestionViewing() {
       <p>データの読み込みでエラーが発生しました。再度読み込んで下さい。</p>
     );
   }
-  
+
   return (
     <div className="m-auth relative h-[700px] w-[900px] overflow-hidden border">
       {desks.map((desk, index) => (
-        <div
+        <Button
           key={desk?.id}
           className={cn(
             "absolute flex h-[50px] w-[70px] cursor-pointer items-center justify-center rounded shadow",
-            desk?.used ? "bg-red-600" : "bg-green-600"
+            desk?.used
+              ? "bg-red-600 hover:bg-red-400"
+              : "bg-green-600 hover:bg-green-400"
           )}
           style={{
             top: desk?.y,
             left: desk?.x
+          }}
+          onClick={() => {
+            set(
+              ref(db, `stores/${userInfo?.storeId}/desks/${desk?.id}/used`),
+              !desk?.used
+            );
           }}>
           <p className="text-lg text-white select-none">机 {index + 1}</p>
-        </div>
+        </Button>
       ))}
     </div>
   );
