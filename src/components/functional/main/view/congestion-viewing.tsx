@@ -35,6 +35,7 @@ export default function CongestionViewing() {
       <p>データの読み込みでエラーが発生しました。再度読み込んで下さい。</p>
     );
   }
+  
   return (
     <div className="m-auth relative h-[700px] w-[900px] overflow-hidden border">
       {desks.map((desk, index) => (
