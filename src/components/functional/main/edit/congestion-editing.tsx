@@ -21,6 +21,9 @@ import {
   ContextMenuItem,
   ContextMenuTrigger
 } from "@/components/ui/context-menu";
+import { cn } from "@/lib/utils";
+import { Trash } from "lucide-react";
+import { RotateCcwSquare } from "lucide-react";
 
 type DraggableDeskProps = {
   desk: DeskType & { id: string };
@@ -58,6 +61,13 @@ function DraggableDesk({ desk, index, userInfo }: DraggableDeskProps) {
     const deskRef = ref(db, `stores/${userInfo.storeId}/desks/${desk.id}`);
     set(deskRef, null);
   }
+  function turnDesk() {
+    if (!userInfo?.storeId) return;
+    set(
+      ref(db, `stores/${userInfo.storeId}/desks/${desk.id}/rotation`),
+      (desk.rotation + 90) % 180
+    );
+  }
 
   return (
     <ContextMenu>
@@ -67,12 +77,22 @@ function DraggableDesk({ desk, index, userInfo }: DraggableDeskProps) {
           style={style}
           {...listeners}
           {...attributes}
-          className="bg-primary absolute flex h-[50px] w-[70px] cursor-pointer touch-none items-center justify-center rounded shadow">
+          className={cn(
+            "bg-primary absolute flex cursor-pointer touch-none items-center justify-center rounded shadow",
+            desk.rotation === 90 ? "h-[70px] w-[50px]" : "h-[50px] w-[70px]"
+          )}>
           <p className="text-lg text-white select-none">机 {index + 1}</p>
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem onClick={deleteDesk}>削除</ContextMenuItem>
+        <ContextMenuItem onClick={turnDesk}>
+          <RotateCcwSquare size={16} />
+          回転する
+        </ContextMenuItem>
+        <ContextMenuItem onClick={deleteDesk}>
+          <Trash size={16} />
+          削除
+        </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );

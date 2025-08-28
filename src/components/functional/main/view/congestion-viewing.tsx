@@ -43,7 +43,8 @@ export default function CongestionViewing() {
         <Button
           key={desk?.id}
           className={cn(
-            "absolute flex h-[50px] w-[70px] cursor-pointer items-center justify-center rounded shadow",
+            "absolute flex cursor-pointer items-center justify-center rounded shadow",
+            desk?.rotation === 90 ? "h-[70px] w-[50px]" : "h-[50px] w-[70px]",
             desk?.used
               ? "bg-red-600 hover:bg-red-400"
               : "bg-green-600 hover:bg-green-400"
