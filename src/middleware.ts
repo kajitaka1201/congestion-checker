@@ -18,7 +18,7 @@ export default function middleware(req: NextRequest) {
   const basicAuth = req.headers.get("authorization");
 
   if (basicAuth?.startsWith("Basic ")) {
-    const authValue = basicAuth.substring(6);
+    const authValue = basicAuth.substring("Basic ".length);
     try {
       const [user, password] = atob(authValue).split(":", 2);
 
