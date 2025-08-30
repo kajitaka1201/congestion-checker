@@ -12,30 +12,21 @@ export default function middleware(req: NextRequest) {
     console.error(
       "Basic Auth credentials are not set in environment variables."
     );
-    return new NextResponse("Unauthorized.", {
-      status: 401,
-      headers: {
-        "WWW-authenticate": 'Basic realm="Secure Area"'
-      }
-    });
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 
   const basicAuth = req.headers.get("authorization");
 
   if (basicAuth?.startsWith("Basic ")) {
-    const authValue = basicAuth.split(" ")[1];
-    if (authValue) {
-      try {
-        const [user, password] = atob(authValue).split(":");
-        if (
-          user === process.env.USERNAME &&
-          password === process.env.PASSWORD
-        ) {
-          return NextResponse.next();
-        }
-      } catch (e) {
-        console.error("Failed to decode Basic Auth credentials:", e);
+    const authValue = basicAuth.substring(6);
+    try {
+      const [user, password] = atob(authValue).split(":", 2);
+
+      if (user === process.env.USERNAME && password === process.env.PASSWORD) {
+        return NextResponse.next();
       }
+    } catch (e) {
+      console.error("Failed to decode Basic Auth credentials:", e);
     }
   }
 
