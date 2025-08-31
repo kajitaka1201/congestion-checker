@@ -1,14 +1,202 @@
-import CongestionEditing from "@/components/functional/main/edit/congestion-editing";
+"use client";
+
+import { auth, db } from "@/firebase";
+import { DatabaseType, DeskType, UserType } from "@/types/firebase-type";
+import {
+  DndContext,
+  DragEndEvent,
+  useDraggable,
+  rectIntersection
+} from "@dnd-kit/core";
+import { UUID } from "crypto";
+import { ref, set, update } from "firebase/database";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useObjectVal } from "react-firebase-hooks/database";
+import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { v7 as createUUID } from "uuid";
+import { cn } from "@/lib/utils";
+import { Plus, RotateCcw, Trash } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Dispatch, SetStateAction, useState } from "react";
+
+type DraggableDeskProps = {
+  desk: DeskType & { id: UUID };
+  index: number;
+  userInfo: UserType | null | undefined;
+  selectedDeskUUID: UUID | null;
+  setSelectedDeskUUID: Dispatch<SetStateAction<UUID | null>>;
+};
+
+function DraggableDesk({
+  desk,
+  index,
+  selectedDeskUUID,
+  setSelectedDeskUUID
+}: DraggableDeskProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setDraggableNodeRef,
+    transform
+  } = useDraggable({
+    id: desk.id
+  });
+
+  const setNodeRef = (node: HTMLElement | null) => {
+    setDraggableNodeRef(node);
+  };
+
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        top: desk.y,
+        left: desk.x
+      }
+    : {
+        top: desk.y,
+        left: desk.x
+      };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      className={cn(
+        "bg-primary absolute flex cursor-move touch-none items-center justify-center rounded shadow",
+        desk.rotation === 90 ? "h-[70px] w-[50px]" : "h-[50px] w-[70px]",
+        selectedDeskUUID === desk.id && "ring-4 ring-blue-500 ring-offset-2"
+      )}
+      onMouseDown={() => setSelectedDeskUUID(desk.id)}
+    >
+      <p className="text-lg text-white select-none">机 {index + 1}</p>
+    </div>
+  );
+}
 
 export default function Page() {
+  const [user, userLoading, userError] = useAuthState(auth);
+  const [userInfo, userInfoLoading, userInfoError] = useObjectVal<UserType>(
+    ref(db, `users/${user?.uid}`)
+  );
+  const [value, valueLoading, valueError] = useObjectVal<
+    DatabaseType["stores"][UUID]["desks"]
+  >(ref(db, `stores/${userInfo?.storeId}/desks`));
+  const desks = Object.entries(value || {})
+    .map(([id, desk]) => {
+      if (typeof desk !== "object" || desk === null) return null;
+      return {
+        id: id as UUID,
+        x: desk.x,
+        y: desk.y,
+        rotation: desk.rotation,
+        used: desk.used
+      };
+    })
+    .filter(Boolean);
+  const [selectedDeskUUID, setSelectedDeskUUID] = useState<UUID | null>(null);
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, delta } = event;
+    const deskId = active.id as UUID;
+    const desk = desks.find(d => d?.id === deskId);
+
+    if (!desk || !userInfo?.storeId) return;
+
+    const newX = Math.round(desk.x + delta.x);
+    const newY = Math.round(desk.y + delta.y);
+
+    const deskRef = ref(db, `stores/${userInfo.storeId}/desks/${deskId}`);
+    update(deskRef, { x: newX, y: newY });
+  }
+  function addDesk() {
+    if (!userInfo?.storeId) return;
+
+    const newDesk = {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      used: false
+    };
+
+    const deskRef = ref(db, `stores/${userInfo.storeId}/desks`);
+    update(deskRef, { [createUUID()]: newDesk });
+  }
+  function deleteDesk(desk: DraggableDeskProps["desk"] | null | undefined) {
+    if (!userInfo?.storeId || !desk) return;
+    const deskRef = ref(db, `stores/${userInfo.storeId}/desks/${desk.id}`);
+    set(deskRef, null);
+  }
+  function turnDesk(desk: DraggableDeskProps["desk"] | null | undefined) {
+    if (!userInfo?.storeId || !desk) return;
+    set(
+      ref(db, `stores/${userInfo.storeId}/desks/${desk.id}/rotation`),
+      (desk.rotation + 90) % 180
+    );
+  }
+
+  if (userLoading || userInfoLoading || valueLoading) return <p>Loading...</p>;
+  if (userError || userInfoError || valueError) {
+    return (
+      <p>データの読み込みでエラーが発生しました。再度読み込んで下さい。</p>
+    );
+  }
   return (
-    <main className="p-4">
-      <Button asChild>
-        <Link href="/view">閲覧ページへ</Link>
-      </Button>
-      <CongestionEditing />
+    <main className="flex">
+      <div className="flex w-50 flex-col gap-2 border-r p-2">
+        <Button onClick={addDesk}>
+          <Plus size={16} />
+          机を追加
+        </Button>
+        <Separator orientation="horizontal" />
+        {selectedDeskUUID ? (
+          <>
+            <Button
+              onClick={() =>
+                turnDesk(desks.find(d => d?.id === selectedDeskUUID))
+              }
+            >
+              <RotateCcw size={16} />
+              机を回転
+            </Button>
+            <Button
+              onClick={() =>
+                deleteDesk(desks.find(d => d?.id === selectedDeskUUID))
+              }
+            >
+              <Trash size={16} />
+              机を削除
+            </Button>
+          </>
+        ) : (
+          <>
+            <p>机をクリックし選択して下さい。</p>
+          </>
+        )}
+      </div>
+      <DndContext
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToParentElement]}
+        collisionDetection={rectIntersection}
+      >
+        <div className="relative m-2 h-[700px] w-[900px] overflow-hidden rounded border">
+          {desks.map(
+            (desk, index) =>
+              desk && (
+                <DraggableDesk
+                  key={desk.id}
+                  desk={desk}
+                  index={index}
+                  userInfo={userInfo}
+                  selectedDeskUUID={selectedDeskUUID}
+                  setSelectedDeskUUID={setSelectedDeskUUID}
+                />
+              )
+          )}
+        </div>
+      </DndContext>
     </main>
   );
 }
