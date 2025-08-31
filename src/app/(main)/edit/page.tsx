@@ -65,9 +65,10 @@ function DraggableDesk({
       {...listeners}
       {...attributes}
       className={cn(
-        "bg-primary absolute flex cursor-move touch-none items-center justify-center rounded shadow",
+        "absolute flex cursor-move touch-none items-center justify-center rounded shadow",
         desk.rotation === 90 ? "h-[70px] w-[50px]" : "h-[50px] w-[70px]",
-        selectedDeskUUID === desk.id && "ring-4 ring-blue-500 ring-offset-2"
+        selectedDeskUUID === desk.id && "ring-4 ring-blue-500 ring-offset-2",
+        desk.used ? "bg-red-600" : "bg-green-600"
       )}
       onMouseDown={() => setSelectedDeskUUID(desk.id)}
     >
