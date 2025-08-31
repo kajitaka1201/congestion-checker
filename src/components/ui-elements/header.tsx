@@ -1,22 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { ModeToggle } from "@/components/ui-elements/mode-toggle";
 import Link from "next/link";
-import HeaderUser from "@/components/ui-elements/header-user";
+import HeaderMenu from "@/components/ui-elements/header-menu";
 
 export default function Header() {
   return (
-    <header className="p-2 flex items-center justify-between">
+    <header className="flex items-center justify-between px-4 py-2 shadow">
       <div>
         <h1 className="text-2xl font-bold">
           <Link href="/">Congestion Checker</Link>
         </h1>
       </div>
-      <div className="flex items-center gap-2">
-        <ModeToggle />
-        <Button asChild>
-          <HeaderUser />
-        </Button>
-      </div>
+      <HeaderMenu />
     </header>
   );
 }

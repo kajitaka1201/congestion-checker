@@ -1,8 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { auth } from "@/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,19 +31,20 @@ import { z } from "zod";
 
 const formSchema = z.object({
   id: z.string(),
-  password: z.string(),
+  password: z.string()
 });
 const emailDomain = process.env.NEXT_PUBLIC_EMAIL_DOMAIN;
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [signInWithEmailAndPassword, user, , error] = useSignInWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, user, , error] =
+    useSignInWithEmailAndPassword(auth);
 
   const router = useRouter();
 
   useEffect(() => {
     if (user) {
-      router.push("/");
+      router.push("/view");
     }
   }, [user, router]);
 
@@ -37,17 +53,20 @@ export default function LoginForm() {
     disabled: isLoading,
     defaultValues: {
       id: "",
-      password: "",
-    },
+      password: ""
+    }
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    const user = await signInWithEmailAndPassword(`${values.id}@${emailDomain}`, values.password);
+    const user = await signInWithEmailAndPassword(
+      `${values.id}@${emailDomain}`,
+      values.password
+    );
     if (!user) {
       setIsLoading(false);
       toast("ログインに失敗しました", {
-        description: "ID と パスワードを確認してください",
+        description: "ID と パスワードを確認してください"
       });
       return;
     }
@@ -60,7 +79,9 @@ export default function LoginForm() {
         <Card className="mx-auto w-96">
           <CardHeader>
             <CardTitle className="text-2xl">Sign In</CardTitle>
-            <CardDescription>IDとパスワードでログインしてください</CardDescription>
+            <CardDescription>
+              IDとパスワードでログインしてください
+            </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
@@ -73,7 +94,9 @@ export default function LoginForm() {
                     <FormControl>
                       <Input placeholder="yatai-1" {...field} />
                     </FormControl>
-                    <FormDescription>屋台に振り分けられたIDを入力してください</FormDescription>
+                    <FormDescription>
+                      屋台に振り分けられたIDを入力してください
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -87,9 +110,16 @@ export default function LoginForm() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="パスワードを入力" type="password" autoComplete="current-password" {...field} />
+                      <Input
+                        placeholder="パスワードを入力"
+                        type="password"
+                        autoComplete="current-password"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormDescription>IDに対応するパスワードを入力してください</FormDescription>
+                    <FormDescription>
+                      IDに対応するパスワードを入力してください
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

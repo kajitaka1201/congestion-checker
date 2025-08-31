@@ -38,7 +38,7 @@ export default function CongestionViewing() {
   }
 
   return (
-    <div className="m-auth relative h-[700px] w-[900px] overflow-hidden border">
+    <div className="relative h-[700px] w-[900px] overflow-hidden border">
       {desks.map((desk, index) => (
         <Button
           key={desk?.id}
