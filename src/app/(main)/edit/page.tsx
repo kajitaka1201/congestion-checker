@@ -147,11 +147,13 @@ export default function Page() {
   return (
     <main className="flex">
       <div className="flex w-50 flex-col gap-2 border-r p-2">
+        <p className="text-xl">Layout Controls</p>
         <Button onClick={addDesk}>
           <Plus size={16} />
           机を追加
         </Button>
         <Separator orientation="horizontal" />
+        <p className="text-lg">Selected Desk</p>
         {selectedDeskUUID ? (
           <>
             <Button
@@ -173,7 +175,7 @@ export default function Page() {
           </>
         ) : (
           <>
-            <p>机をクリックし選択して下さい。</p>
+            <p className="text-sm">机をクリックし選択して下さい。</p>
           </>
         )}
       </div>

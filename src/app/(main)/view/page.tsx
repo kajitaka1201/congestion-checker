@@ -67,7 +67,7 @@ export default function Page() {
           </p>
         </div>
       </div>
-      <div className="relative mx-auto h-[700px] w-[900px] overflow-hidden border">
+      <div className="relative mx-auto h-[700px] w-[900px] overflow-hidden rounded border">
         {desks.map((desk, index) => (
           <Button
             key={desk?.id}
@@ -87,7 +87,8 @@ export default function Page() {
                 ref(db, `stores/${userInfo?.storeId}/desks/${desk?.id}/used`),
                 !desk?.used
               );
-            }}>
+            }}
+          >
             <p className="text-lg text-white select-none">机 {index + 1}</p>
           </Button>
         ))}
