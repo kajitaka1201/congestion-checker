@@ -156,6 +156,9 @@ export default function Page() {
         <p className="text-lg">Selected Desk</p>
         {selectedDeskUUID ? (
           <>
+            <p className="text-xs">
+              机 {desks.findIndex(d => d?.id === selectedDeskUUID) + 1} を選択中
+            </p>
             <Button
               onClick={() =>
                 turnDesk(desks.find(d => d?.id === selectedDeskUUID))
@@ -175,7 +178,7 @@ export default function Page() {
           </>
         ) : (
           <>
-            <p className="text-sm">机をクリックし選択して下さい。</p>
+            <p className="text-xs">机をクリックし選択して下さい。</p>
           </>
         )}
       </div>
