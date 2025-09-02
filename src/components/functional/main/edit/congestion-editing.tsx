@@ -23,6 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Trash } from "lucide-react";
 import { RotateCcwSquare } from "lucide-react";
+import { useMemo } from "react";
 
 type DraggableDeskProps = {
   desk: DeskType & { id: string };
@@ -118,11 +119,15 @@ export default function CongestionEditing() {
       };
     })
     .filter(Boolean);
+  const desksMap = useMemo(
+      () => new Map(desks.map(desk => [desk?.id, desk])),
+      [desks]
+    );
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, delta } = event;
     const deskId = active.id as string;
-    const desk = desks.find(d => d?.id === deskId);
+    const desk = desksMap.get(deskId);
 
     if (!desk || !userInfo?.storeId) return;
 

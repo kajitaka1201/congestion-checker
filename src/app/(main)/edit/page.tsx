@@ -100,16 +100,20 @@ export default function Page() {
     [value]
   );
   const [selectedDeskId, setSelectedDeskId] = useState<string | null>(null);
-  const selectedDesk = useMemo(
-    () => desks.find(d => d?.id === selectedDeskId) || null,
-    [desks, selectedDeskId]
+  const desksMap = useMemo(
+    () => new Map(desks.map(desk => [desk?.id, desk])),
+    [desks]
   );
+  const selectedDesk = useMemo(
+    () => (selectedDeskId ? desksMap.get(selectedDeskId) : undefined) || null,
+    [desksMap, selectedDeskId]
+  );
+  
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, delta } = event;
     const deskId = active.id;
-    const desk = desks.find(d => d?.id === deskId);
-
+    const desk = desksMap.get(String(deskId));
     if (!desk || !userInfo?.storeId) return;
 
     const newX = Math.round(desk.x + delta.x);
