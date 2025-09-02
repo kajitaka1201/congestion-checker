@@ -80,7 +80,8 @@ function DraggableDesk({ desk, index, userInfo }: DraggableDeskProps) {
           className={cn(
             "bg-primary absolute flex cursor-pointer touch-none items-center justify-center rounded shadow",
             desk.rotation === 90 ? "h-[70px] w-[50px]" : "h-[50px] w-[70px]"
-          )}>
+          )}
+        >
           <p className="text-lg text-white select-none">机 {index + 1}</p>
         </div>
       </ContextMenuTrigger>
@@ -159,7 +160,8 @@ export default function CongestionEditing() {
       <DndContext
         onDragEnd={handleDragEnd}
         modifiers={[restrictToParentElement]}
-        collisionDetection={rectIntersection}>
+        collisionDetection={rectIntersection}
+      >
         <div className="relative h-[700px] w-[900px] overflow-hidden border">
           {desks.map(
             (desk, index) =>
