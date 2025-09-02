@@ -108,7 +108,6 @@ export default function Page() {
     () => (selectedDeskId ? desksMap.get(selectedDeskId) : undefined) || null,
     [desksMap, selectedDeskId]
   );
-  
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, delta } = event;

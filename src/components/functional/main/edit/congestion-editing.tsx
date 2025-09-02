@@ -120,9 +120,9 @@ export default function CongestionEditing() {
     })
     .filter(Boolean);
   const desksMap = useMemo(
-      () => new Map(desks.map(desk => [desk?.id, desk])),
-      [desks]
-    );
+    () => new Map(desks.map(desk => [desk?.id, desk])),
+    [desks]
+  );
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, delta } = event;
