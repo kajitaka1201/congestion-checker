@@ -33,6 +33,10 @@ export default function Page() {
         .filter(Boolean),
     [value]
   );
+  const occupiedDesksCount = useMemo(
+    () => desks.filter(desk => desk?.used).length,
+    [desks]
+  ); 
 
   if (userLoading || userInfoLoading || valueLoading) return <p>Loading...</p>;
   if (userError || userInfoError || valueError) {
@@ -47,13 +51,13 @@ export default function Page() {
         <div className="w-1/4 text-center">
           <p className="text-sm">Available</p>
           <p className="text-2xl font-bold text-green-600">
-            {desks.filter(desk => !desk?.used).length}
+            {desks.length - occupiedDesksCount}
           </p>
         </div>
         <div className="w-1/4 text-center">
           <p className="text-sm">Occupied</p>
           <p className="text-2xl font-bold text-red-600">
-            {desks.filter(desk => desk?.used).length}
+            {occupiedDesksCount}
           </p>
         </div>
         <div className="w-1/4 text-center">
@@ -63,11 +67,7 @@ export default function Page() {
         <div className="w-1/4 text-center">
           <p className="text-sm">Occupancy</p>
           <p className="text-2xl font-bold text-indigo-600">
-            {Math.round(
-              (desks.filter(desk => desk?.used).length / desks.length) * 100 ||
-                0
-            )}
-            %
+            {Math.round((occupiedDesksCount / desks.length) * 100 || 0)}%
           </p>
         </div>
       </div>
