@@ -32,18 +32,9 @@ function DraggableDesk({
   selectedDeskId,
   setSelectedDeskId
 }: DraggableDeskProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef: setDraggableNodeRef,
-    transform
-  } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: desk.id
   });
-
-  const setNodeRef = (node: HTMLElement | null) => {
-    setDraggableNodeRef(node);
-  };
 
   const style = transform
     ? {
