@@ -22,7 +22,6 @@ import { Dispatch, SetStateAction, useMemo, useState } from "react";
 type DraggableDeskProps = {
   desk: DeskType & { id: string };
   index: number;
-  userInfo: UserType | null | undefined;
   selectedDeskId: string | null;
   setSelectedDeskId: Dispatch<SetStateAction<string | null>>;
 };
@@ -194,7 +193,6 @@ export default function Page() {
                   key={desk.id}
                   desk={desk}
                   index={index}
-                  userInfo={userInfo}
                   selectedDeskId={selectedDeskId}
                   setSelectedDeskId={setSelectedDeskId}
                 />
