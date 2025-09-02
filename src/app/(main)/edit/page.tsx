@@ -1,7 +1,7 @@
 "use client";
 
-import { auth, db } from "@/firebase";
-import { DatabaseType, DeskType, UserType } from "@/types/firebase-type";
+import { db } from "@/firebase";
+import { DeskType } from "@/types/firebase-type";
 import {
   DndContext,
   DragEndEvent,
@@ -9,8 +9,6 @@ import {
   rectIntersection
 } from "@dnd-kit/core";
 import { ref, set, update } from "firebase/database";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useObjectVal } from "react-firebase-hooks/database";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { Button } from "@/components/ui/button";
 import { v7 as createUUID } from "uuid";
@@ -18,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { Plus, RotateCcw, Trash } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { useStoreData } from "@/hooks/use-store-data";
 
 type DraggableDeskProps = {
   desk: DeskType & { id: string };
@@ -66,29 +65,7 @@ function DraggableDesk({
 }
 
 export default function Page() {
-  const [user, userLoading, userError] = useAuthState(auth);
-  const [userInfo, userInfoLoading, userInfoError] = useObjectVal<UserType>(
-    user ? ref(db, `users/${user.uid}`) : null
-  );
-  const [value, valueLoading, valueError] = useObjectVal<
-    DatabaseType["stores"][string]["desks"]
-  >(userInfo?.storeId ? ref(db, `stores/${userInfo.storeId}/desks`) : null);
-  const desks = useMemo(
-    () =>
-      Object.entries(value || {})
-        .map(([id, desk]) => {
-          if (typeof desk !== "object" || desk === null) return null;
-          return {
-            id: id,
-            x: desk.x,
-            y: desk.y,
-            rotation: desk.rotation,
-            used: desk.used
-          };
-        })
-        .filter(Boolean),
-    [value]
-  );
+  const { userInfo, desks, loading, error } = useStoreData();
   const [selectedDeskId, setSelectedDeskId] = useState<string | null>(null);
   const desksMap = useMemo(
     () => new Map(desks.map(desk => [desk?.id, desk])),
@@ -137,8 +114,8 @@ export default function Page() {
     );
   }
 
-  if (userLoading || userInfoLoading || valueLoading) return <p>Loading...</p>;
-  if (userError || userInfoError || valueError) {
+  if (loading) return <p>Loading...</p>;
+  if (error) {
     return (
       <p>データの読み込みでエラーが発生しました。再度読み込んで下さい。</p>
     );

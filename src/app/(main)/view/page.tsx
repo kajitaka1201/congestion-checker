@@ -1,45 +1,21 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { auth, db } from "@/firebase";
+import { db } from "@/firebase";
+import { useStoreData } from "@/hooks/use-store-data";
 import { cn } from "@/lib/utils";
-import { DatabaseType, UserType } from "@/types/firebase-type";
 import { ref, set } from "firebase/database";
 import { useMemo } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useObjectVal } from "react-firebase-hooks/database";
 
 export default function Page() {
-  const [user, userLoading, userError] = useAuthState(auth);
-  const [userInfo, userInfoLoading, userInfoError] = useObjectVal<UserType>(
-    user ? ref(db, `users/${user.uid}`) : null
-  );
-  const [value, valueLoading, valueError] = useObjectVal<
-    DatabaseType["stores"][string]["desks"]
-  >(userInfo?.storeId ? ref(db, `stores/${userInfo.storeId}/desks`) : null);
-  const desks = useMemo(
-    () =>
-      Object.entries(value || {})
-        .map(([id, desk]) => {
-          if (typeof desk !== "object" || desk === null) return null;
-          return {
-            id: id,
-            x: desk.x,
-            y: desk.y,
-            rotation: desk.rotation,
-            used: desk.used
-          };
-        })
-        .filter(Boolean),
-    [value]
-  );
+  const { userInfo, desks, loading, error } = useStoreData();
   const occupiedDesksCount = useMemo(
     () => desks.filter(desk => desk?.used).length,
     [desks]
-  ); 
+  );
 
-  if (userLoading || userInfoLoading || valueLoading) return <p>Loading...</p>;
-  if (userError || userInfoError || valueError) {
+  if (loading) return <p>Loading...</p>;
+  if (error) {
     return (
       <p>データの読み込みでエラーが発生しました。再度読み込んで下さい。</p>
     );
