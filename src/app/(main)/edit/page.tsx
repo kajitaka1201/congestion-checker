@@ -18,7 +18,7 @@ import { v7 as createUUID } from "uuid";
 import { cn } from "@/lib/utils";
 import { Plus, RotateCcw, Trash } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 type DraggableDeskProps = {
   desk: DeskType & { id: UUID };
@@ -85,19 +85,27 @@ export default function Page() {
   const [value, valueLoading, valueError] = useObjectVal<
     DatabaseType["stores"][UUID]["desks"]
   >(ref(db, `stores/${userInfo?.storeId}/desks`));
-  const desks = Object.entries(value || {})
-    .map(([id, desk]) => {
-      if (typeof desk !== "object" || desk === null) return null;
-      return {
-        id: id as UUID,
-        x: desk.x,
-        y: desk.y,
-        rotation: desk.rotation,
-        used: desk.used
-      };
-    })
-    .filter(Boolean);
+  const desks = useMemo(
+    () =>
+      Object.entries(value || {})
+        .map(([id, desk]) => {
+          if (typeof desk !== "object" || desk === null) return null;
+          return {
+            id: id as UUID,
+            x: desk.x,
+            y: desk.y,
+            rotation: desk.rotation,
+            used: desk.used
+          };
+        })
+        .filter(Boolean),
+    [value]
+  );
   const [selectedDeskUUID, setSelectedDeskUUID] = useState<UUID | null>(null);
+  const selectedDesk = useMemo(
+    () => desks.find(d => d?.id === selectedDeskUUID) || null,
+    [desks, selectedDeskUUID]
+  );
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, delta } = event;
@@ -159,19 +167,11 @@ export default function Page() {
             <p className="text-xs">
               机 {desks.findIndex(d => d?.id === selectedDeskUUID) + 1} を選択中
             </p>
-            <Button
-              onClick={() =>
-                turnDesk(desks.find(d => d?.id === selectedDeskUUID))
-              }
-            >
+            <Button onClick={() => turnDesk(selectedDesk)}>
               <RotateCcw size={16} />
               机を回転
             </Button>
-            <Button
-              onClick={() =>
-                deleteDesk(desks.find(d => d?.id === selectedDeskUUID))
-              }
-            >
+            <Button onClick={() => deleteDesk(selectedDesk)}>
               <Trash size={16} />
               机を削除
             </Button>

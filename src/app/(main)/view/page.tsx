@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { DatabaseType, UserType } from "@/types/firebase-type";
 import { UUID } from "crypto";
 import { ref, set } from "firebase/database";
+import { useMemo } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useObjectVal } from "react-firebase-hooks/database";
 
@@ -17,18 +18,22 @@ export default function Page() {
   const [value, valueLoading, valueError] = useObjectVal<
     DatabaseType["stores"][UUID]["desks"]
   >(ref(db, `stores/${userInfo?.storeId}/desks`));
-  const desks = Object.entries(value || {})
-    .map(([id, desk]) => {
-      if (typeof desk !== "object" || desk === null) return null;
-      return {
-        id: id,
-        x: desk.x,
-        y: desk.y,
-        rotation: desk.rotation,
-        used: desk.used
-      };
-    })
-    .filter(Boolean);
+  const desks = useMemo(
+    () =>
+      Object.entries(value || {})
+        .map(([id, desk]) => {
+          if (typeof desk !== "object" || desk === null) return null;
+          return {
+            id: id,
+            x: desk.x,
+            y: desk.y,
+            rotation: desk.rotation,
+            used: desk.used
+          };
+        })
+        .filter(Boolean),
+    [value]
+  );
 
   if (userLoading || userInfoLoading || valueLoading) return <p>Loading...</p>;
   if (userError || userInfoError || valueError) {
