@@ -1,20 +1,18 @@
-import { UUID } from "crypto";
-
 export type DatabaseType = {
   stores: {
-    [key: UUID]: {
+    [key: string]: {
       desks: {
-        [key: UUID]: DeskType;
+        [key: string]: DeskType;
       };
     };
   };
   users: {
-    [key: UUID]: UserType;
+    [key: string]: UserType;
   };
 };
 
 export type UserType = {
-  storeId: UUID;
+  storeId: string;
 };
 
 export type DeskType = {

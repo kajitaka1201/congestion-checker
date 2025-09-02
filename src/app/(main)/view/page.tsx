@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { auth, db } from "@/firebase";
 import { cn } from "@/lib/utils";
 import { DatabaseType, UserType } from "@/types/firebase-type";
-import { UUID } from "crypto";
 import { ref, set } from "firebase/database";
 import { useMemo } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -16,7 +15,7 @@ export default function Page() {
     ref(db, `users/${user?.uid}`)
   );
   const [value, valueLoading, valueError] = useObjectVal<
-    DatabaseType["stores"][UUID]["desks"]
+    DatabaseType["stores"][string]["desks"]
   >(ref(db, `stores/${userInfo?.storeId}/desks`));
   const desks = useMemo(
     () =>

@@ -8,7 +8,6 @@ import {
   useDraggable,
   rectIntersection
 } from "@dnd-kit/core";
-import { UUID } from "crypto";
 import { ref, set, update } from "firebase/database";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useObjectVal } from "react-firebase-hooks/database";
@@ -105,7 +104,7 @@ export default function CongestionEditing() {
     ref(db, `users/${user?.uid}`)
   );
   const [value, valueLoading, valueError] = useObjectVal<
-    DatabaseType["stores"][UUID]["desks"]
+    DatabaseType["stores"][string]["desks"]
   >(ref(db, `stores/${userInfo?.storeId}/desks`));
   const desks = Object.entries(value || {})
     .map(([id, desk]) => {

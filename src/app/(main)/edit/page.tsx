@@ -8,7 +8,6 @@ import {
   useDraggable,
   rectIntersection
 } from "@dnd-kit/core";
-import { UUID } from "crypto";
 import { ref, set, update } from "firebase/database";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useObjectVal } from "react-firebase-hooks/database";
@@ -21,18 +20,18 @@ import { Separator } from "@/components/ui/separator";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 type DraggableDeskProps = {
-  desk: DeskType & { id: UUID };
+  desk: DeskType & { id: string };
   index: number;
   userInfo: UserType | null | undefined;
-  selectedDeskUUID: UUID | null;
-  setSelectedDeskUUID: Dispatch<SetStateAction<UUID | null>>;
+  selectedDeskId: string | null;
+  setSelectedDeskId: Dispatch<SetStateAction<string | null>>;
 };
 
 function DraggableDesk({
   desk,
   index,
-  selectedDeskUUID,
-  setSelectedDeskUUID
+  selectedDeskId,
+  setSelectedDeskId
 }: DraggableDeskProps) {
   const {
     attributes,
@@ -67,10 +66,10 @@ function DraggableDesk({
       className={cn(
         "absolute flex cursor-move touch-none items-center justify-center rounded shadow",
         desk.rotation === 90 ? "h-[70px] w-[50px]" : "h-[50px] w-[70px]",
-        selectedDeskUUID === desk.id && "ring-4 ring-blue-500 ring-offset-2",
+        selectedDeskId === desk.id && "ring-4 ring-blue-500 ring-offset-2",
         desk.used ? "bg-red-600" : "bg-green-600"
       )}
-      onMouseDown={() => setSelectedDeskUUID(desk.id)}
+      onMouseDown={() => setSelectedDeskId(desk.id)}
     >
       <p className="text-lg text-white select-none">机 {index + 1}</p>
     </div>
@@ -83,7 +82,7 @@ export default function Page() {
     ref(db, `users/${user?.uid}`)
   );
   const [value, valueLoading, valueError] = useObjectVal<
-    DatabaseType["stores"][UUID]["desks"]
+    DatabaseType["stores"][string]["desks"]
   >(ref(db, `stores/${userInfo?.storeId}/desks`));
   const desks = useMemo(
     () =>
@@ -91,7 +90,7 @@ export default function Page() {
         .map(([id, desk]) => {
           if (typeof desk !== "object" || desk === null) return null;
           return {
-            id: id as UUID,
+            id: id,
             x: desk.x,
             y: desk.y,
             rotation: desk.rotation,
@@ -101,15 +100,15 @@ export default function Page() {
         .filter(Boolean),
     [value]
   );
-  const [selectedDeskUUID, setSelectedDeskUUID] = useState<UUID | null>(null);
+  const [selectedDeskId, setSelectedDeskId] = useState<string | null>(null);
   const selectedDesk = useMemo(
-    () => desks.find(d => d?.id === selectedDeskUUID) || null,
-    [desks, selectedDeskUUID]
+    () => desks.find(d => d?.id === selectedDeskId) || null,
+    [desks, selectedDeskId]
   );
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, delta } = event;
-    const deskId = active.id as UUID;
+    const deskId = active.id;
     const desk = desks.find(d => d?.id === deskId);
 
     if (!desk || !userInfo?.storeId) return;
@@ -162,10 +161,10 @@ export default function Page() {
         </Button>
         <Separator orientation="horizontal" />
         <p className="text-lg">Selected Desk</p>
-        {selectedDeskUUID ? (
+        {selectedDeskId ? (
           <>
             <p className="text-xs">
-              机 {desks.findIndex(d => d?.id === selectedDeskUUID) + 1} を選択中
+              机 {desks.findIndex(d => d?.id === selectedDeskId) + 1} を選択中
             </p>
             <Button onClick={() => turnDesk(selectedDesk)}>
               <RotateCcw size={16} />
@@ -196,8 +195,8 @@ export default function Page() {
                   desk={desk}
                   index={index}
                   userInfo={userInfo}
-                  selectedDeskUUID={selectedDeskUUID}
-                  setSelectedDeskUUID={setSelectedDeskUUID}
+                  selectedDeskId={selectedDeskId}
+                  setSelectedDeskId={setSelectedDeskId}
                 />
               )
           )}
