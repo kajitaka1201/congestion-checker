@@ -78,11 +78,11 @@ function DraggableDesk({
 export default function Page() {
   const [user, userLoading, userError] = useAuthState(auth);
   const [userInfo, userInfoLoading, userInfoError] = useObjectVal<UserType>(
-    ref(db, `users/${user?.uid}`)
+    user ? ref(db, `users/${user.uid}`) : null
   );
   const [value, valueLoading, valueError] = useObjectVal<
     DatabaseType["stores"][string]["desks"]
-  >(ref(db, `stores/${userInfo?.storeId}/desks`));
+  >(userInfo?.storeId ? ref(db, `stores/${userInfo.storeId}/desks`) : null);
   const desks = useMemo(
     () =>
       Object.entries(value || {})
