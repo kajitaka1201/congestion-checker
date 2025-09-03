@@ -1,68 +1,20 @@
 "use client";
 
 import { db } from "@/firebase";
-import { DeskType } from "@/types/firebase-type";
 import {
   DndContext,
   DragEndEvent,
-  useDraggable,
   rectIntersection
 } from "@dnd-kit/core";
 import { ref, set, update } from "firebase/database";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { Button } from "@/components/ui/button";
 import { v7 as createUUID } from "uuid";
-import { cn } from "@/lib/utils";
 import { Plus, RotateCcw, Trash } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useStoreData } from "@/hooks/use-store-data";
-
-type DraggableDeskProps = {
-  desk: DeskType & { id: string };
-  index: number;
-  selectedDeskId: string | null;
-  setSelectedDeskId: Dispatch<SetStateAction<string | null>>;
-};
-
-function DraggableDesk({
-  desk,
-  index,
-  selectedDeskId,
-  setSelectedDeskId
-}: DraggableDeskProps) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: desk.id
-  });
-
-  const style = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        top: desk.y,
-        left: desk.x
-      }
-    : {
-        top: desk.y,
-        left: desk.x
-      };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-      className={cn(
-        "bg-primary hover:bg-primary/80 absolute flex cursor-move touch-none items-center justify-center rounded shadow",
-        desk.rotation === 90 ? "h-[70px] w-[50px]" : "h-[50px] w-[70px]",
-        selectedDeskId === desk.id && "ring-4 ring-blue-500 ring-offset-2"
-      )}
-      onMouseDown={() => setSelectedDeskId(desk.id)}
-    >
-      <p className="text-lg text-white select-none">机 {index + 1}</p>
-    </div>
-  );
-}
+import  DraggableDesk, { DraggableDeskProps }  from "@/components/functional/main/edit/draggable-desk";
 
 export default function Page() {
   const { userInfo, desks, loading, error } = useStoreData();
