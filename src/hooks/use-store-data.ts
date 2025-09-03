@@ -13,7 +13,7 @@ export function useStoreData() {
   const [value, valueLoading, valueError] = useObjectVal<
     DatabaseType["stores"][string]["desks"]
   >(userInfo?.storeId ? ref(db, `stores/${userInfo.storeId}/desks`) : null);
-  
+
   const desks = useMemo(
     () =>
       Object.entries(value || {})
@@ -21,7 +21,8 @@ export function useStoreData() {
           if (typeof desk !== "object" || desk === null) return null;
           return { id, ...desk };
         })
-        .filter(Boolean),
+        .filter((desk): desk is NonNullable<typeof desk> => !!desk)
+        .sort((a, b) => a.id.localeCompare(b.id)),
     [value]
   );
 
@@ -30,6 +31,6 @@ export function useStoreData() {
     userInfo,
     desks,
     loading: userLoading || userInfoLoading || valueLoading,
-    error: userError || userInfoError || valueError,
+    error: userError || userInfoError || valueError
   };
 }
