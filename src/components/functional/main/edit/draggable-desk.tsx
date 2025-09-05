@@ -8,28 +8,35 @@ export type DraggableDeskProps = {
   index: number;
   selectedDeskId: string | null;
   setSelectedDeskId: Dispatch<SetStateAction<string | null>>;
+  width: number;
 };
 
 export default function DraggableDesk({
   desk,
   index,
   selectedDeskId,
-  setSelectedDeskId
+  setSelectedDeskId,
+  width
 }: DraggableDeskProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: desk.id
   });
-
-  const style = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        top: desk.y,
-        left: desk.x
-      }
-    : {
-        top: desk.y,
-        left: desk.x
-      };
+  const style =
+    desk.orientation === "horizontal"
+      ? {
+          transform: `translate3d(${transform?.x || 0}px, ${transform?.y || 0}px, 0)`,
+          top: `${desk.y}%`,
+          left: `${desk.x}%`,
+          width: width * (70 / 900),
+          height: width * (50 / 900)
+        }
+      : {
+          transform: `translate3d(${transform?.x || 0}px, ${transform?.y || 0}px, 0)`,
+          top: `${desk.y}%`,
+          left: `${desk.x}%`,
+          width: width * (50 / 900),
+          height: width * (70 / 900)
+        };
 
   return (
     <div
@@ -39,12 +46,11 @@ export default function DraggableDesk({
       {...attributes}
       className={cn(
         "bg-primary hover:bg-primary/80 absolute flex cursor-move touch-none items-center justify-center rounded shadow",
-        desk.rotation === 90 ? "h-[70px] w-[50px]" : "h-[50px] w-[70px]",
         selectedDeskId === desk.id && "ring-4 ring-blue-500 ring-offset-2"
       )}
       onMouseDown={() => setSelectedDeskId(desk.id)}
     >
-      <p className="text-lg text-white select-none">机 {index + 1}</p>
+      <p className="text-xs text-white select-none">{index + 1}</p>
     </div>
   );
 }
