@@ -44,7 +44,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (user) {
-      router.push("/view");
+      router.push("/");
     }
   }, [user, router]);
 

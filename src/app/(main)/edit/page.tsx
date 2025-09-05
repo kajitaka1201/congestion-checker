@@ -1,20 +1,19 @@
 "use client";
 
 import { db } from "@/firebase";
-import {
-  DndContext,
-  DragEndEvent,
-  rectIntersection
-} from "@dnd-kit/core";
+import { DndContext, DragEndEvent, rectIntersection } from "@dnd-kit/core";
 import { ref, set, update } from "firebase/database";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { Button } from "@/components/ui/button";
 import { v7 as createUUID } from "uuid";
-import { Plus, RotateCcw, Trash } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { useMemo, useState } from "react";
+import { Plus, Trash } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useStoreData } from "@/hooks/use-store-data";
-import  DraggableDesk, { DraggableDeskProps }  from "@/components/functional/main/edit/draggable-desk";
+import DraggableDesk, {
+  DraggableDeskProps
+} from "@/components/functional/main/edit/draggable-desk";
+import { Separator } from "@/components/ui/separator";
+import { MdRotate90DegreesCcw } from "react-icons/md";
 
 export default function Page() {
   const { userInfo, desks, loading, error } = useStoreData();
@@ -27,6 +26,20 @@ export default function Page() {
     () => (selectedDeskId ? desksMap.get(selectedDeskId) : undefined) || null,
     [desksMap, selectedDeskId]
   );
+  const [dimensions, setDimensions] = useState({ width: 900, height: 700 });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      const width = Math.min(900, window.innerWidth - 32);
+      const height = width * (7 / 9);
+      setDimensions({ width, height });
+    };
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, []);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, delta } = event;
@@ -34,8 +47,11 @@ export default function Page() {
     const desk = desksMap.get(String(deskId));
     if (!desk || !userInfo?.storeId) return;
 
-    const newX = Math.round(desk.x + delta.x);
-    const newY = Math.round(desk.y + delta.y);
+    const deltaXPercent = (delta.x / dimensions.width) * 100;
+    const deltaYPercent = (delta.y / dimensions.height) * 100;
+
+    const newX = Math.max(0, Math.min(100, desk.x + deltaXPercent));
+    const newY = Math.max(0, Math.min(100, desk.y + deltaYPercent));
 
     const deskRef = ref(db, `stores/${userInfo.storeId}/desks/${deskId}`);
     update(deskRef, { x: newX, y: newY });
@@ -46,8 +62,8 @@ export default function Page() {
     const newDesk = {
       x: 0,
       y: 0,
-      rotation: 0,
-      used: false
+      used: false,
+      orientation: "horizontal"
     };
 
     const deskRef = ref(db, `stores/${userInfo.storeId}/desks`);
@@ -61,8 +77,8 @@ export default function Page() {
   function turnDesk(desk: DraggableDeskProps["desk"] | null | undefined) {
     if (!userInfo?.storeId || !desk) return;
     set(
-      ref(db, `stores/${userInfo.storeId}/desks/${desk.id}/rotation`),
-      (desk.rotation + 90) % 180
+      ref(db, `stores/${userInfo.storeId}/desks/${desk.id}/orientation`),
+      desk.orientation === "horizontal" ? "vertical" : "horizontal"
     );
   }
 
@@ -73,33 +89,27 @@ export default function Page() {
     );
   }
   return (
-    <main className="flex">
-      <div className="flex w-50 flex-col gap-2 border-r p-2">
-        <p className="text-xl">Layout Controls</p>
+    <main className="space-y-4 px-4 py-2">
+      <div className="flex items-center gap-2 py-2">
         <Button onClick={addDesk}>
           <Plus size={16} />
           机を追加
         </Button>
-        <Separator orientation="horizontal" />
-        <p className="text-lg">Selected Desk</p>
+        <Separator orientation="vertical" />
         {selectedDeskId ? (
-          <>
+          <div className="flex items-center gap-2">
             <p className="text-xs">
-              机 {desks.findIndex(d => d?.id === selectedDeskId) + 1} を選択中
+              机{desks.findIndex(d => d?.id === selectedDeskId) + 1}を選択中
             </p>
-            <Button onClick={() => turnDesk(selectedDesk)}>
-              <RotateCcw size={16} />
-              机を回転
+            <Button onClick={() => turnDesk(selectedDesk)} title="向きを変える">
+              <MdRotate90DegreesCcw size={16} />
             </Button>
-            <Button onClick={() => deleteDesk(selectedDesk)}>
+            <Button onClick={() => deleteDesk(selectedDesk)} title="机を削除">
               <Trash size={16} />
-              机を削除
             </Button>
-          </>
+          </div>
         ) : (
-          <>
-            <p className="text-xs">机をクリックし選択して下さい。</p>
-          </>
+          <p className="text-xs">机を選択して下さい</p>
         )}
       </div>
       <DndContext
@@ -107,7 +117,10 @@ export default function Page() {
         modifiers={[restrictToParentElement]}
         collisionDetection={rectIntersection}
       >
-        <div className="relative m-2 h-[700px] w-[900px] overflow-hidden rounded border">
+        <div
+          className="relative m-2 mx-auto overflow-hidden rounded border"
+          style={{ width: dimensions.width, height: dimensions.height }}
+        >
           {desks.map(
             (desk, index) =>
               desk && (
@@ -117,6 +130,7 @@ export default function Page() {
                   index={index}
                   selectedDeskId={selectedDeskId}
                   setSelectedDeskId={setSelectedDeskId}
+                  width={dimensions.width}
                 />
               )
           )}

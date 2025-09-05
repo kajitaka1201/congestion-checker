@@ -16,8 +16,8 @@ export type UserType = {
 };
 
 export type DeskType = {
-  x: number;
-  y: number;
-  rotation: 0 | 90;
+  x: number; // x座標をパーセント形式で
+  y: number; // y座標をパーセント形式で
+  orientation: "horizontal" | "vertical";
   used: boolean;
 };
