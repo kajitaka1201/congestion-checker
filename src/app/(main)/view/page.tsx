@@ -96,7 +96,11 @@ export default function Page() {
               );
             }}
           >
-            <p className="text-xs text-white select-none">{index + 1}</p>
+            {dimensions.width > 800 ? (
+              <p className="text-lg text-white select-none">机 {index + 1}</p>
+            ) : (
+              <p className="text-xs text-white select-none">{index + 1}</p>
+            )}{" "}
           </Button>
         ))}
       </div>
