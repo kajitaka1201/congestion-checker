@@ -11,7 +11,7 @@ export default function Page() {
     () => desks.filter(desk => desk?.used).length,
     [desks]
   );
-  const dimensions = useResponsiveContainer(900, 7 / 9);
+  const dimensions = useResponsiveContainer(900, 7 / 9, 2);
 
   if (loading) return <p>Loading...</p>;
   if (error) {

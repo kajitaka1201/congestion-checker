@@ -27,7 +27,7 @@ export default function Page() {
     () => (selectedDeskId ? desksMap.get(selectedDeskId) : undefined) || null,
     [desksMap, selectedDeskId]
   );
-  const dimensions = useResponsiveContainer(900, 7 / 9);
+  const dimensions = useResponsiveContainer(900, 7 / 9,2);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, delta } = event;

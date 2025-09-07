@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 
-export function useResponsiveContainer(maxWidth: number, aspectRatio: number) {
+export function useResponsiveContainer(
+  maxWidth: number,
+  aspectRatio: number,
+  horizontalPaddingInRem: number
+) {
   const [dimensions, setDimensions] = useState({
     width: maxWidth,
     height: maxWidth * aspectRatio
@@ -11,7 +15,7 @@ export function useResponsiveContainer(maxWidth: number, aspectRatio: number) {
       const remInPixels = parseFloat(
         getComputedStyle(document.documentElement).fontSize
       );
-      const horizontalPadding = 2 * remInPixels;
+      const horizontalPadding = horizontalPaddingInRem * remInPixels;
       const width = Math.min(
         maxWidth,
         document.documentElement.clientWidth - horizontalPadding
@@ -27,7 +31,7 @@ export function useResponsiveContainer(maxWidth: number, aspectRatio: number) {
     return () => {
       window.removeEventListener("resize", updateDimensions);
     };
-  }, [maxWidth, aspectRatio]);
+  }, [maxWidth, aspectRatio, horizontalPaddingInRem]);
 
   return dimensions;
 }
