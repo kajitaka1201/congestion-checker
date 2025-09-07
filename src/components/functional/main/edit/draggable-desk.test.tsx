@@ -5,8 +5,8 @@ import DraggableDesk from "./draggable-desk";
 import { DeskType } from "@/types/firebase-type";
 
 const mockDesk: DeskType & { id: string } = {
-  x: 100,
-  y: 200,
+  x: 10,
+  y: 20,
   orientation: "horizontal",
   used: false,
   id: "desk-1"
@@ -46,14 +46,14 @@ describe("DraggableDesk", () => {
     expect((deskElement as HTMLElement).style.left).toBe("100%");
   });
 
-  it("applies horizontal dimensions for rotation 0", () => {
+  it("applies horizontal dimensions", () => {
     renderWithDndContext(<DraggableDesk {...mockProps} />);
     const deskElement = screen.getByText("机 1").parentElement;
     expect((deskElement as HTMLElement).style.width).toBe("70px");
     expect((deskElement as HTMLElement).style.height).toBe("50px");
   });
 
-  it("applies vertical dimensions for rotation 90", () => {
+  it("applies vertical dimensions", () => {
     const rotatedDesk = { ...mockDesk, orientation: "vertical" as const };
     renderWithDndContext(<DraggableDesk {...mockProps} desk={rotatedDesk} />);
     const deskElement = screen.getByText("机 1").parentElement;
