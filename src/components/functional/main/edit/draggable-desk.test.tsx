@@ -17,7 +17,7 @@ const mockProps = {
   index: 0,
   selectedDeskId: null,
   setSelectedDeskId: mock(),
-  width: 900
+  dimensions: { width: 900, height: 700 }
 };
 
 const renderWithDndContext = (component: React.ReactElement) => {

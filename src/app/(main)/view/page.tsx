@@ -1,10 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { db } from "@/firebase";
+import DeskButton from "@/components/functional/main/view/desk-button";
 import { useStoreData } from "@/hooks/use-store-data";
-import { cn } from "@/lib/utils";
-import { ref, set } from "firebase/database";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Page() {
@@ -66,42 +63,13 @@ export default function Page() {
         style={{ width: dimensions.width, height: dimensions.height }}
       >
         {desks.map((desk, index) => (
-          <Button
-            key={desk?.id}
-            className={cn(
-              "absolute flex cursor-pointer items-center justify-center rounded p-0 shadow",
-              desk?.used
-                ? "bg-red-600 hover:bg-red-400"
-                : "bg-green-600 hover:bg-green-400"
-            )}
-            style={
-              desk.orientation === "horizontal"
-                ? {
-                    top: `${desk.y}%`,
-                    left: `${desk.x}%`,
-                    width: dimensions.width * (70 / 900),
-                    height: dimensions.width * (50 / 900)
-                  }
-                : {
-                    top: `${desk.y}%`,
-                    left: `${desk.x}%`,
-                    width: dimensions.width * (50 / 900),
-                    height: dimensions.width * (70 / 900)
-                  }
-            }
-            onClick={() => {
-              set(
-                ref(db, `stores/${userInfo?.storeId}/desks/${desk?.id}/used`),
-                !desk?.used
-              );
-            }}
-          >
-            {dimensions.width > 800 ? (
-              <p className="text-lg text-white select-none">机 {index + 1}</p>
-            ) : (
-              <p className="text-xs text-white select-none">{index + 1}</p>
-            )}{" "}
-          </Button>
+          <DeskButton
+            key={index}
+            desk={desk}
+            index={index}
+            dimensions={dimensions}
+            userInfo={userInfo}
+          />
         ))}
       </div>
     </main>

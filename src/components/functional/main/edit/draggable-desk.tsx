@@ -1,3 +1,4 @@
+import { useDeskStyle } from "@/hooks/use-desk-style";
 import { cn } from "@/lib/utils";
 import { DeskType } from "@/types/firebase-type";
 import { useDraggable } from "@dnd-kit/core";
@@ -8,7 +9,7 @@ export type DraggableDeskProps = {
   index: number;
   selectedDeskId: string | null;
   setSelectedDeskId: Dispatch<SetStateAction<string | null>>;
-  width: number;
+  dimensions: { width: number; height: number };
 };
 
 export default function DraggableDesk({
@@ -16,32 +17,23 @@ export default function DraggableDesk({
   index,
   selectedDeskId,
   setSelectedDeskId,
-  width
+  dimensions
 }: DraggableDeskProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: desk.id
   });
-  const style =
-    desk.orientation === "horizontal"
-      ? {
-          transform: `translate3d(${transform?.x || 0}px, ${transform?.y || 0}px, 0)`,
-          top: `${desk.y}%`,
-          left: `${desk.x}%`,
-          width: width * (70 / 900),
-          height: width * (50 / 900)
-        }
-      : {
-          transform: `translate3d(${transform?.x || 0}px, ${transform?.y || 0}px, 0)`,
-          top: `${desk.y}%`,
-          left: `${desk.x}%`,
-          width: width * (50 / 900),
-          height: width * (70 / 900)
-        };
+  const basicStyle = useDeskStyle(desk, {
+    width: dimensions.width,
+    height: dimensions.height
+  });
 
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{
+        ...basicStyle,
+        transform: `translate3d(${transform?.x || 0}px, ${transform?.y || 0}px, 0)`
+      }}
       {...listeners}
       {...attributes}
       className={cn(
@@ -50,7 +42,7 @@ export default function DraggableDesk({
       )}
       onMouseDown={() => setSelectedDeskId(desk.id)}
     >
-      {width > 800 ? (
+      {dimensions.width > 800 ? (
         <p className="text-lg text-white select-none">机 {index + 1}</p>
       ) : (
         <p className="text-xs text-white select-none">{index + 1}</p>

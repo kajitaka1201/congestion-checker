@@ -141,7 +141,7 @@ export default function Page() {
                   index={index}
                   selectedDeskId={selectedDeskId}
                   setSelectedDeskId={setSelectedDeskId}
-                  width={dimensions.width}
+                  dimensions={dimensions}
                 />
               )
           )}
