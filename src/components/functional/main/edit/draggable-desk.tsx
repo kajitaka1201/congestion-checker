@@ -1,4 +1,4 @@
-import { useDeskStyle } from "@/hooks/use-desk-style";
+import { generateDeskStyle } from "@/hooks/generate-desk-style";
 import { cn } from "@/lib/utils";
 import { DeskType } from "@/types/firebase-type";
 import { useDraggable } from "@dnd-kit/core";
@@ -22,7 +22,7 @@ export default function DraggableDesk({
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: desk.id
   });
-  const basicStyle = useDeskStyle(desk, {
+  const basicStyle = generateDeskStyle(desk, {
     width: dimensions.width,
     height: dimensions.height
   });

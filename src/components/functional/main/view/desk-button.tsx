@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { DeskType, UserType } from "@/types/firebase-type";
 import { cn } from "@/lib/utils";
-import { useDeskStyle } from "@/hooks/use-desk-style";
+import { generateDeskStyle } from "@/hooks/generate-desk-style";
 import { ref, set } from "firebase/database";
 import { db } from "@/firebase";
 
@@ -9,14 +9,14 @@ export default function DeskButton({
   desk,
   index,
   dimensions,
-  userInfo,
+  userInfo
 }: {
   desk: DeskType & { id: string };
   index: number;
   dimensions: { width: number; height: number };
   userInfo: UserType | undefined;
 }) {
-  const style = useDeskStyle(desk, dimensions);
+  const style = generateDeskStyle(desk, dimensions);
   return (
     <Button
       key={desk?.id}

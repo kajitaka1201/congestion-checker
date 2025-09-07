@@ -6,7 +6,7 @@ export interface DeskStyleOptions {
   baseHeight?: number;
 }
 
-export function useDeskStyle(desk: DeskType, dimensions: { width: number; height: number }) {
+export function generateDeskStyle(desk: DeskType, dimensions: { width: number; height: number }) {
 
   const isHorizontal = desk.orientation === "horizontal";
 
