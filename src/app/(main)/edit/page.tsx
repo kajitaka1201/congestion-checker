@@ -50,8 +50,19 @@ export default function Page() {
     const deltaXPercent = (delta.x / dimensions.width) * 100;
     const deltaYPercent = (delta.y / dimensions.height) * 100;
 
-    const newX = Math.max(0, Math.min(100, desk.x + deltaXPercent));
-    const newY = Math.max(0, Math.min(100, desk.y + deltaYPercent));
+    const deskWidthPercent =
+      ((desk.orientation === "horizontal" ? 70 : 50) / 900) * 100;
+    const deskHeightPercent =
+      ((desk.orientation === "horizontal" ? 50 : 70) / 700) * 100;
+
+    const newX = Math.max(
+      0,
+      Math.min(100 - deskWidthPercent, desk.x + deltaXPercent)
+    );
+    const newY = Math.max(
+      0,
+      Math.min(100 - deskHeightPercent, desk.y + deltaYPercent)
+    );
 
     const deskRef = ref(db, `stores/${userInfo.storeId}/desks/${deskId}`);
     update(deskRef, { x: newX, y: newY });
