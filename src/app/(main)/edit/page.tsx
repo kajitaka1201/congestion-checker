@@ -7,13 +7,14 @@ import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { Button } from "@/components/ui/button";
 import { v7 as createUUID } from "uuid";
 import { Plus, Trash } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useStoreData } from "@/hooks/use-store-data";
 import DraggableDesk, {
   DraggableDeskProps
 } from "@/components/functional/main/edit/draggable-desk";
 import { Separator } from "@/components/ui/separator";
 import { MdRotate90DegreesCcw } from "react-icons/md";
+import { useResponsiveContainer } from "@/hooks/use-responsive-container";
 
 export default function Page() {
   const { userInfo, desks, loading, error } = useStoreData();
@@ -26,20 +27,8 @@ export default function Page() {
     () => (selectedDeskId ? desksMap.get(selectedDeskId) : undefined) || null,
     [desksMap, selectedDeskId]
   );
-  const [dimensions, setDimensions] = useState({ width: 900, height: 700 });
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      const width = Math.min(900, window.innerWidth - 32);
-      const height = width * (7 / 9);
-      setDimensions({ width, height });
-    };
-
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions);
-
-    return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dimensions = useResponsiveContainer(containerRef, 900, 7 / 9);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, delta } = event;
@@ -129,6 +118,7 @@ export default function Page() {
         collisionDetection={rectIntersection}
       >
         <div
+          ref={containerRef}
           className="relative m-2 mx-auto overflow-hidden rounded border"
           style={{ width: dimensions.width, height: dimensions.height }}
         >
