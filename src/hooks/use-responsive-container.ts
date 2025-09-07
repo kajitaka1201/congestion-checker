@@ -7,9 +7,22 @@ export function useResponsiveContainer(maxWidth: number, aspectRatio: number) {
   });
 
   useEffect(() => {
-    const width = Math.min(maxWidth, window.innerWidth - 32);
-    const height = width * aspectRatio;
-    setDimensions({ width, height });
+    const updateDimensions = () => {
+      const width = Math.min(
+        maxWidth,
+        document.documentElement.clientWidth - 32
+      );
+      const height = width * aspectRatio;
+      setDimensions({ width, height });
+    };
+
+    updateDimensions();
+
+    window.addEventListener("resize", updateDimensions);
+
+    return () => {
+      window.removeEventListener("resize", updateDimensions);
+    };
   }, [maxWidth, aspectRatio]);
 
   return dimensions;
