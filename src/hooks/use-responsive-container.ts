@@ -1,29 +1,16 @@
-import { useState, useEffect, RefObject } from "react";
+import { useState, useEffect } from "react";
 
-export function useResponsiveContainer(
-  containerRef: RefObject<HTMLElement | null>,
-  maxWidth: number,
-  aspectRatio: number
-) {
+export function useResponsiveContainer(maxWidth: number, aspectRatio: number) {
   const [dimensions, setDimensions] = useState({
     width: maxWidth,
     height: maxWidth * aspectRatio
   });
 
   useEffect(() => {
-    const element = containerRef?.current;
-    if (!element) return;
-
-    const resizeObserver = new ResizeObserver(() => {
-      const width = Math.min(maxWidth, element.clientWidth);
-      const height = width * aspectRatio;
-      setDimensions({ width, height });
-    });
-
-    resizeObserver.observe(element);
-
-    return () => resizeObserver.disconnect();
-  }, [containerRef, maxWidth, aspectRatio]);
+    const width = Math.min(maxWidth, window.innerWidth - 32);
+    const height = width * aspectRatio;
+    setDimensions({ width, height });
+  }, [maxWidth, aspectRatio]);
 
   return dimensions;
 }

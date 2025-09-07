@@ -7,7 +7,7 @@ import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { Button } from "@/components/ui/button";
 import { v7 as createUUID } from "uuid";
 import { Plus, Trash } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useStoreData } from "@/hooks/use-store-data";
 import DraggableDesk, {
   DraggableDeskProps
@@ -27,8 +27,7 @@ export default function Page() {
     () => (selectedDeskId ? desksMap.get(selectedDeskId) : undefined) || null,
     [desksMap, selectedDeskId]
   );
-  const containerRef = useRef<HTMLDivElement>(null);
-  const dimensions = useResponsiveContainer(containerRef, 900, 7 / 9);
+  const dimensions = useResponsiveContainer(900, 7 / 9);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, delta } = event;
@@ -118,7 +117,6 @@ export default function Page() {
         collisionDetection={rectIntersection}
       >
         <div
-          ref={containerRef}
           className="relative m-2 mx-auto overflow-hidden rounded border"
           style={{ width: dimensions.width, height: dimensions.height }}
         >

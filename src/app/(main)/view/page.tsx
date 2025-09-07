@@ -3,7 +3,7 @@
 import DeskButton from "@/components/functional/main/view/desk-button";
 import { useResponsiveContainer } from "@/hooks/use-responsive-container";
 import { useStoreData } from "@/hooks/use-store-data";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 export default function Page() {
   const { userInfo, desks, loading, error } = useStoreData();
@@ -11,8 +11,7 @@ export default function Page() {
     () => desks.filter(desk => desk?.used).length,
     [desks]
   );
-  const containerRef = useRef<HTMLDivElement>(null);
-  const dimensions = useResponsiveContainer(containerRef, 900, 7 / 9);
+  const dimensions = useResponsiveContainer(900, 7 / 9);
 
   if (loading) return <p>Loading...</p>;
   if (error) {
@@ -48,7 +47,6 @@ export default function Page() {
         </div>
       </div>
       <div
-        ref={containerRef}
         className="relative mx-auto overflow-hidden rounded border"
         style={{ width: dimensions.width, height: dimensions.height }}
       >
