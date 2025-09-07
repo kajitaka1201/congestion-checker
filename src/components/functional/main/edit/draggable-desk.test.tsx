@@ -31,24 +31,24 @@ describe("DraggableDesk", () => {
 
   it("renders desk with correct text", () => {
     renderWithDndContext(<DraggableDesk {...mockProps} />);
-    expect(screen.getByText("1")).toBeTruthy();
+    expect(screen.getByText("机 1")).toBeTruthy();
   });
 
   it("renders desk with correct index", () => {
     renderWithDndContext(<DraggableDesk {...mockProps} index={2} />);
-    expect(screen.getByText("3")).toBeTruthy();
+    expect(screen.getByText("机 3")).toBeTruthy();
   });
 
   it("applies correct position styles", () => {
     renderWithDndContext(<DraggableDesk {...mockProps} />);
-    const deskElement = screen.getByText("1").parentElement;
+    const deskElement = screen.getByText("机 1").parentElement;
     expect((deskElement as HTMLElement).style.top).toBe("200%");
     expect((deskElement as HTMLElement).style.left).toBe("100%");
   });
 
   it("applies horizontal dimensions for rotation 0", () => {
     renderWithDndContext(<DraggableDesk {...mockProps} />);
-    const deskElement = screen.getByText("1").parentElement;
+    const deskElement = screen.getByText("机 1").parentElement;
     expect((deskElement as HTMLElement).style.width).toBe("70px");
     expect((deskElement as HTMLElement).style.height).toBe("50px");
   });
@@ -56,7 +56,7 @@ describe("DraggableDesk", () => {
   it("applies vertical dimensions for rotation 90", () => {
     const rotatedDesk = { ...mockDesk, orientation: "vertical" as const };
     renderWithDndContext(<DraggableDesk {...mockProps} desk={rotatedDesk} />);
-    const deskElement = screen.getByText("1").parentElement;
+    const deskElement = screen.getByText("机 1").parentElement;
     expect((deskElement as HTMLElement).style.width).toBe("50px");
     expect((deskElement as HTMLElement).style.height).toBe("70px");
   });
@@ -65,7 +65,7 @@ describe("DraggableDesk", () => {
     renderWithDndContext(
       <DraggableDesk {...mockProps} selectedDeskId="desk-1" />
     );
-    const deskElement = screen.getByText("1").parentElement;
+    const deskElement = screen.getByText("机 1").parentElement;
     expect(deskElement?.className).toInclude("ring-4");
     expect(deskElement?.className).toInclude("ring-blue-500");
     expect(deskElement?.className).toInclude("ring-offset-2");
@@ -75,7 +75,7 @@ describe("DraggableDesk", () => {
     renderWithDndContext(
       <DraggableDesk {...mockProps} selectedDeskId="other-desk" />
     );
-    const deskElement = screen.getByText("1").parentElement;
+    const deskElement = screen.getByText("机 1").parentElement;
     expect(deskElement?.className).not.toInclude("ring-4");
   });
 
@@ -84,7 +84,7 @@ describe("DraggableDesk", () => {
     renderWithDndContext(
       <DraggableDesk {...mockProps} setSelectedDeskId={setSelectedDeskId} />
     );
-    const deskElement = screen.getByText("1").parentElement;
+    const deskElement = screen.getByText("机 1").parentElement;
 
     fireEvent.mouseDown(deskElement!);
     expect(setSelectedDeskId).toHaveBeenCalledWith("desk-1");
@@ -92,13 +92,13 @@ describe("DraggableDesk", () => {
 
   it("applies cursor-move class for draggable behavior", () => {
     renderWithDndContext(<DraggableDesk {...mockProps} />);
-    const deskElement = screen.getByText("1").parentElement;
+    const deskElement = screen.getByText("机 1").parentElement;
     expect(deskElement?.className).toInclude("cursor-move");
   });
 
   it("applies touch-none class for touch interactions", () => {
     renderWithDndContext(<DraggableDesk {...mockProps} />);
-    const deskElement = screen.getByText("1").parentElement;
+    const deskElement = screen.getByText("机 1").parentElement;
     expect(deskElement?.className).toInclude("touch-none");
   });
 });
