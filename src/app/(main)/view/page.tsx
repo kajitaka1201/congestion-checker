@@ -64,7 +64,7 @@ export default function Page() {
       >
         {desks.map((desk, index) => (
           <DeskButton
-            key={index}
+            key={desk.id}
             desk={desk}
             index={index}
             dimensions={dimensions}
