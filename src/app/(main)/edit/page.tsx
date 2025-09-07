@@ -117,7 +117,7 @@ export default function Page() {
         collisionDetection={rectIntersection}
       >
         <div
-          className="relative m-2 mx-auto overflow-hidden rounded border"
+          className="relative mx-auto overflow-hidden rounded border"
           style={{ width: dimensions.width, height: dimensions.height }}
         >
           {desks.map(

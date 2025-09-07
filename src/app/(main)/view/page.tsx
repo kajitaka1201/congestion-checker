@@ -21,8 +21,8 @@ export default function Page() {
   }
 
   return (
-    <main className="space-y-4">
-      <div className="flex w-full items-center px-4 py-2">
+    <main className="space-y-4 px-4">
+      <div className="flex w-full items-center py-2">
         <div className="w-1/4 text-center">
           <p className="text-sm">Available</p>
           <p className="text-2xl font-bold text-green-600">
