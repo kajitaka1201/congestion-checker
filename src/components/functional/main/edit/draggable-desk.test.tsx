@@ -42,8 +42,8 @@ describe("DraggableDesk", () => {
   it("applies correct position styles", () => {
     renderWithDndContext(<DraggableDesk {...mockProps} />);
     const deskElement = screen.getByText("机 1").parentElement;
-    expect((deskElement as HTMLElement).style.top).toBe("200%");
-    expect((deskElement as HTMLElement).style.left).toBe("100%");
+    expect((deskElement as HTMLElement).style.top).toBe("20%");
+    expect((deskElement as HTMLElement).style.left).toBe("10%");
   });
 
   it("applies horizontal dimensions", () => {
