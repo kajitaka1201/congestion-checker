@@ -8,9 +8,13 @@ export function useResponsiveContainer(maxWidth: number, aspectRatio: number) {
 
   useEffect(() => {
     const updateDimensions = () => {
+      const remInPixels = parseFloat(
+        getComputedStyle(document.documentElement).fontSize
+      );
+      const horizontalPadding = 2 * remInPixels;
       const width = Math.min(
         maxWidth,
-        document.documentElement.clientWidth - 32
+        document.documentElement.clientWidth - horizontalPadding
       );
       const height = width * aspectRatio;
       setDimensions({ width, height });
