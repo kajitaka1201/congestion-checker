@@ -16,8 +16,14 @@ export type UserType = {
 };
 
 export type DeskType = {
-  x: number; // x座標をパーセント形式で
-  y: number; // y座標をパーセント形式で
+  /**
+   * x座標 (コンテナ幅に対するパーセンテージ, 0-100)
+   */
+  x: number;
+  /**
+   * y座標 (コンテナ高さに対するパーセンテージ, 0-100)
+   */
+  y: number;
   orientation: "horizontal" | "vertical";
   used: boolean;
 };
