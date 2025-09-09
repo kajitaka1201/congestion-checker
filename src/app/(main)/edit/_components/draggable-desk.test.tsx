@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { DndContext } from "@dnd-kit/core";
 import { describe, it, expect, mock, afterEach } from "bun:test";
-import DraggableDesk from "./draggable-desk";
+import DraggableDesk from "@/app/(main)/edit/_components/draggable-desk";
 import { DeskType } from "@/types/firebase-type";
 
 const mockDesk: DeskType & { id: string } = {

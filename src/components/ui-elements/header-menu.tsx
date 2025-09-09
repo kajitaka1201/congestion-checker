@@ -9,7 +9,8 @@ import { auth } from "@/firebase";
 import { useError } from "@/hooks/use-error";
 import Link from "next/link";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+
 export default function HeaderUser() {
   const [user, loading, error] = useAuthState(auth);
   useError(error);
