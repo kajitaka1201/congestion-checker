@@ -7,7 +7,7 @@ import { useStoreData } from "@/hooks/use-store-data";
 import DraggableDesk from "@/app/(main)/edit/_components/draggable-desk";
 import { useResponsiveContainer } from "@/hooks/use-responsive-container";
 import EditToolbar from "@/app/(main)/edit/_components/edit-toolbar";
-import { useDeskOperations } from "@/app/(main)/edit/_hooks/use-desk-operations";
+import { handleDragEnd } from "@/app/(main)/edit/_hooks/get-handle-drag-end";
 
 export default function Page() {
   const { userInfo, desks, loading, error } = useStoreData();
@@ -22,12 +22,6 @@ export default function Page() {
   );
   const dimensions = useResponsiveContainer(900, 7 / 9, 2);
 
-  const { handleDragEnd, addDesk, deleteDesk, turnDesk } = useDeskOperations({
-    userInfo,
-    desksMap,
-    dimensions
-  });
-
   if (loading) return <p>Loading...</p>;
   if (error) {
     return (
@@ -37,15 +31,15 @@ export default function Page() {
   return (
     <main className="space-y-4 px-4 py-2">
       <EditToolbar
-        addDesk={addDesk}
         selectedDeskId={selectedDeskId}
         desks={desks}
-        turnDesk={turnDesk}
-        deleteDesk={deleteDesk}
         selectedDesk={selectedDesk}
+        userInfo={userInfo}
       />
       <DndContext
-        onDragEnd={handleDragEnd}
+        onDragEnd={event =>
+          handleDragEnd({ event, userInfo, desksMap, dimensions })
+        }
         modifiers={[restrictToParentElement]}
         collisionDetection={rectIntersection}
       >
