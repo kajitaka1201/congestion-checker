@@ -1,6 +1,6 @@
 "use client";
 
-import DeskButton from "@/components/functional/main/view/desk-button";
+import DeskButton from "@/app/(main)/view/_components/desk-button";
 import { useResponsiveContainer } from "@/hooks/use-responsive-container";
 import { useStoreData } from "@/hooks/use-store-data";
 import { useMemo } from "react";

@@ -1,4 +1,4 @@
-import { DraggableDeskProps } from "@/components/functional/main/edit/draggable-desk";
+import { DraggableDeskProps } from "@/app/(main)/edit/_components/draggable-desk";
 import { db } from "@/firebase";
 import { UserType } from "@/types/firebase-type";
 import { DragEndEvent } from "@dnd-kit/core";

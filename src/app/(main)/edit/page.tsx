@@ -4,10 +4,10 @@ import { DndContext, rectIntersection } from "@dnd-kit/core";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { useMemo, useState } from "react";
 import { useStoreData } from "@/hooks/use-store-data";
-import DraggableDesk from "@/components/functional/main/edit/draggable-desk";
+import DraggableDesk from "@/app/(main)/edit/_components/draggable-desk";
 import { useResponsiveContainer } from "@/hooks/use-responsive-container";
-import EditToolbar from "@/components/functional/main/edit/edit-toolbar";
-import { useDeskOperations } from "@/hooks/use-desk-operations";
+import EditToolbar from "@/app/(main)/edit/_components/edit-toolbar";
+import { useDeskOperations } from "@/app/(main)/edit/_hooks/use-desk-operations";
 
 export default function Page() {
   const { userInfo, desks, loading, error } = useStoreData();
